@@ -64,7 +64,9 @@ class TM:
             print(i)
             self.function[i] = input(": ").split(" ")
 
-    #only useful when all symbols and state names are single characters      
+    #only useful when all symbols and state names are single characters   
+	#FORMAT "transition1,transition2,..." where each transition has the format:
+	# <current state><input char><next state><replace char><left or right on tape>
     def serialSetTransition(self,string):
         data = string.split(",")
         for i in data:
