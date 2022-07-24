@@ -1,3 +1,4 @@
+from asyncore import close_all
 import numpy as np
 
 #NOTE current assumption is 9*9 typical sudoku puzzle
@@ -43,9 +44,31 @@ def get_puzzle_sets(puzzle_mat):
         row_sets.append(temp_rset)
         col_sets.append(temp_cset)
     
+    #obtain block sets 0->0,0  1->0,3  2->0,6
+    for idx3 in range(0,7,3):
+        for idx4 in range(0,7,3):
+            #create new temporary block set
+            temp_bset = set()
+
+            #update set for each value in block
+            for i in range(0,3):
+                for j in range(0,3):
+                    curr_bvalue = puzzle_mat[idx3+i][idx4+j]
+                    if curr_bvalue != 0:
+                        temp_bset.add(curr_bvalue)
+            
+            #add temp set to the list
+            block_sets.append(temp_bset)
+            
+    
+    print("Row sets: ")
     print(row_sets)
-    print("\n\n")
+    print("\nCol sets: ")
     print(col_sets)
+    print("\nBlock sets: ")
+    print(block_sets)
+
+    return row_sets,col_sets,block_sets
 
 #a basic sudoku solver
 '''def basic_solver(puzzle_mat,num_emp_cells):
