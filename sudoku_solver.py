@@ -9,7 +9,6 @@ def get_puzzle_matrix(puzzle_str):
     puzzle_array= [int(i) for i in puzzle_array]
     puzzle_matrix = np.array(puzzle_array)
     puzzle_matrix = np.reshape(puzzle_matrix,(9,9))
-    print(puzzle_matrix)
     return puzzle_matrix
 
 #converts matrix representation to sets representation
@@ -69,6 +68,22 @@ def print_sets(row_sets, col_sets, block_sets):
     print(block_sets)
     print("---------------------------------")
 
+#draw solution from string
+def draw(puzzle):
+    for r in range(len(puzzle)):
+        if r == 0 or r == 3 or r == 6:
+            print("+-------+-------+-------+")
+        for c in range(len(puzzle[r])):
+            if c == 0 or c == 3 or c ==6:
+                print("| ", end = "")
+            if puzzle[r][c] != 0:
+                print(puzzle[r][c], end = " ")
+            else:
+                print(end = "  ")
+            if c == 8:
+                print("|")
+    print("+-------+-------+-------+")
+
 #get empty cell locations
 def get_empty_cells(puzzle_mat):
     empty_cells = []
@@ -82,6 +97,7 @@ def get_empty_cells(puzzle_mat):
 def basic_solver(puzzle):
     #get matrix form of string puzzle
     puzzle_mat = get_puzzle_matrix(puzzle)
+    draw(puzzle_mat)
 
     #get sets form from matrix form
     rsets,csets,bsets = get_puzzle_sets(puzzle_mat)
@@ -145,8 +161,6 @@ def basic_solver(puzzle):
     return puzzle_mat
 
             
-
-
 '''MAIN HERE'''
 # string representation of sudoku puzzle - serialized left to right, top-down
 # 0 represents the empty cells needed to be filled in
@@ -156,5 +170,9 @@ puzzle2 = "084650000300490050010007400063502190075060230092703540009100060040039
 '''solution1 = basic_solver(puzzle1)
 print(solution1)'''
 
-solution2 = basic_solver(puzzle2)
-print(solution2)
+'''solution2 = basic_solver(puzzle2)
+print(solution2)'''
+
+puzzle3 = "006100000007500300004008607000000000003040200050800700030001020090200800000000061"
+sol3 = basic_solver(puzzle3)
+draw(sol3)
