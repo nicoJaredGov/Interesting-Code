@@ -1,5 +1,5 @@
 class GraphItem:
-    def __init__(self, metadata, labels):
+    def __init__(self, metadata: dict, labels: set[str]):
         self.metadata = metadata
         self.labels = labels
     
