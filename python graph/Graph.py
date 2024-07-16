@@ -1,19 +1,27 @@
 from Vertex import Vertex
 
 class Graph:
-    def __init__(self,n):
+    def __init__(self, graphItems, connections=[]):
         self.vertices = []
         self.edges = []
 
-        #adds n new vertex objects to vertices, labelled from 0 ~ n-1
-        for i in range(n):
-            self.vertices.append(Vertex(i))
+        for index, item in enumerate(graphItems):
+            self.vertices.append(Vertex(index, item.metadata, item.labels))
+        
+        for connection in connections:
+            self.addEdge(connection[0], connection[1])
 
-    #returns a vertex object corresponding to its number label
-    def getVertex(self,n):
-        return self.vertices[n]
+    def printAllVertices(self):
+        [print(v) for v in self.vertices]
 
-    #adds an edge from v1 to v2 (directed)
-    def addEdge(self,v1,v2):
-        v1 = self.getVertex(v1)
-        v1.addAdjacency(v2)
+    def getVertex(self, vertexNumber: int) -> Vertex:
+        return self.vertices[vertexNumber]
+
+    def addUndirectedEdge(self, v1: int, v2: int) -> bool:
+        if v1 < 0 or v1 >= len(self.vertices) or v2 < 0 or v2 >= len(self.vertices):
+            print("Invalid vertex number. Edge not created")
+            return False
+        
+        self.getVertex(v1).addAdjacency(v2)
+        self.getVertex(v2).addAdjacency(v1)
+        return True
