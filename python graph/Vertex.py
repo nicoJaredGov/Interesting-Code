@@ -18,7 +18,7 @@ class Vertex:
     def __repr__(self) -> str:
         repr = f'vertex {self.vertexNumber} - '
         repr += f'metadata:{self.metadata} \t'
-        repr += f'labels:{self.labels} \t'
+        repr += f'labels:{self.labels} \t\t'
         repr += f'color:{self.color} \t'
         repr += f'adjacencies:{self.adjacencies}'
         return repr
