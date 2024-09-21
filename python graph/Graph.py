@@ -3,13 +3,12 @@ from GraphItem import GraphItem
 from itertools import groupby, combinations
 
 class Graph:
-    def __init__(self, graphItems: list[GraphItem], numColors: int | None = None, connections = [], splitLabels: list[str] = []):
+    def __init__(self, graphItems: list[GraphItem], numColors: int | None = None, connections=[]):
         self.vertices: list[Vertex] = []
         self.edges = []
         self.numColors = len(graphItems) if numColors is None else numColors
-        self.colorUsage = {i:0 for i in range(numColors)}
-        self.colorGroups = {i:[] for i in range(numColors)}
-        self.splitLabels = splitLabels 
+        self.colorUsage = {i:0 for i in range(self.numColors)}
+        self.colorGroups = {i:[] for i in range(self.numColors)}
 
         for index, item in enumerate(graphItems):
             self.vertices.append(Vertex(index, item.metadata, item.labels))
@@ -24,33 +23,31 @@ class Graph:
     def getVertex(self, vertexNumber: int) -> Vertex:
         return self.vertices[vertexNumber]
 
-    def addUndirectedEdge(self, v1: int, v2: int) -> bool:
+    def addUndirectedEdge(self, v1: int, v2: int):
         if v1 < 0 or v1 >= len(self.vertices) or v2 < 0 or v2 >= len(self.vertices):
             print("Invalid vertex number. Edge not created")
-            return False
+            return
         
         if v1 == v2:
             print("Cannot create an edge from a vertex to itself in this model")
-            return False
+            return
         
         self.getVertex(v1).addAdjacency(v2)
         self.getVertex(v2).addAdjacency(v1)
-        return True
     
-    def connectByLabels(self):
-        for label in self.splitLabels:
-            for key, group in groupby(sorted(self.vertices, key=lambda x: x.labels[label]), lambda x: x.labels[label]):
-                if key == 0 or key == False:
-                    continue
-                for pair in combinations(list(group),2):
-                    self.addUndirectedEdge(pair[0].vertexNumber, pair[1].vertexNumber)
+    def connectByLabels(self, label, onlyConnectTrue=True):
+        for key, group in groupby(sorted(self.vertices, key=lambda x: x.labels[label]), lambda x: x.labels[label]):
+            if (key == 0 or key == False) and onlyConnectTrue:
+                continue
+            for pair in combinations(list(group),2):
+                self.addUndirectedEdge(pair[0].getVertexNumber(), pair[1].getVertexNumber())
 
     #Graph coloring
     def setColor(self, vertexNumber):
         vertex = self.getVertex(vertexNumber)
 
         used = [0] * self.numColors
-        for v in vertex.adjacencies:
+        for v in vertex.getAdjacencies():
             adjacentVertexColor = self.getVertex(v).color
             if adjacentVertexColor != -1:
                 used[adjacentVertexColor] = 1
@@ -58,53 +55,52 @@ class Graph:
         for i in range(self.numColors):
             if used[i] == 0:
                 vertex.color = i
-                self.colorGroups[i].append(vertex.vertexNumber)    
+                self.colorGroups[i].append(vertexNumber)    
                 self.colorUsage[i] += 1
                 break
     
     def setColorBalanced(self, vertexNumber):
         vertex = self.getVertex(vertexNumber)
-        available = set(range(self.numColors))
+        availableColors = set(range(self.numColors))
 
-        for v in vertex.adjacencies:
+        for v in vertex.getAdjacencies():
             adjacentVertexColor = self.getVertex(v).color
-            if adjacentVertexColor != -1:
-                available.remove(adjacentVertexColor)
+            if adjacentVertexColor != -1 and adjacentVertexColor in availableColors:
+                availableColors.remove(adjacentVertexColor)
 
-        colorChoice = available.pop()
+        if len(availableColors) == 0:
+            availableColors = set(range(self.numColors))
+
+        colorChoice = availableColors.pop()
         minUsage = self.colorUsage[colorChoice]
-        for color in available:
+        for color in availableColors:
             usage = self.colorUsage[color]
             if usage <= minUsage:
                 minUsage = usage
                 colorChoice = color
 
         vertex.color = colorChoice
-        self.colorGroups[colorChoice].append(vertex.vertexNumber)        
+        self.colorGroups[colorChoice].append(vertexNumber)        
         self.colorUsage[colorChoice] += 1
     
-    def getBiggestVertexUncolored(self):
+    def getBiggestUncoloredVertex(self):
         degree = -1
         biggestVertexNumber = -1
-
         for vertex in self.vertices:
             if vertex.color == -1 and vertex.getDegree() > degree:
-                biggestVertexNumber = vertex.vertexNumber
+                biggestVertexNumber = vertex.getVertexNumber()
                 degree = vertex.getDegree()
-        
+
         return biggestVertexNumber
     
-    def colorWholeGraph(self):
-        big = self.getBiggestVertexUncolored()
-        while (big != -1):
-            self.setColor(big)
-            big = self.getBiggestVertexUncolored()
-    
-    def colorGraphBalanced(self):
-        big = self.getBiggestVertexUncolored()
-        while (big != -1):
-            self.setColorBalanced(big)
-            big = self.getBiggestVertexUncolored()
+    def colorGraph(self, isBalanced=False):
+        vertex = self.getBiggestUncoloredVertex()
+        while (vertex != -1):
+            if isBalanced:
+                self.setColorBalanced(vertex)
+            else:
+                self.setColor(vertex)
+            vertex = self.getBiggestUncoloredVertex()
     
     def printColorGroups(self):
         for color in self.colorGroups:
