@@ -101,3 +101,24 @@ def print_sets(rows, cols, blocks):
 
     print(out)
     return out
+
+
+def is_valid_solution(puzzle_mat):
+    universal = set(range(1, 10))
+
+    for i in range(9):
+        # Check row
+        if set(puzzle_mat[i]) != universal:
+            return False
+
+        # Check column
+        if set(puzzle_mat[:, i]) != universal:
+            return False
+
+        # Check block
+        r = 3 * (i // 3)
+        c = 3 * (i % 3)
+        if set(puzzle_mat[r : r + 3, c : c + 3].flatten()) != universal:
+            return False
+
+    return True

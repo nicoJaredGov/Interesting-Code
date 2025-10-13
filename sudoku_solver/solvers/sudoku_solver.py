@@ -1,4 +1,3 @@
-from hashlib import new
 import numpy as np
 
 # NOTE current assumption is 9*9 typical sudoku puzzle

@@ -2,19 +2,19 @@ from .utils import *
 
 
 class SudokuSolverV2:
-    universal = set(range(1, 9))
+    universal = set(range(1, 10))
 
     def __init__(self, puzzle_str: None | str):
         if puzzle_str is not None:
             self.load_new(puzzle_str)
+
+        self.filled = set()
 
     def load_new(self, puzzle_str: str):
         self.puzzle_str = puzzle_str
         self.puzzle_mat = get_2d_array(puzzle_str)
         self.empty_cells = get_empty_cells(self.puzzle_mat)
         self.rows, self.cols, self.blocks = get_sudoku_sets(self.puzzle_mat)
-
-        self.filled = set()
 
     def draw(self, with_color=True):
         if with_color:
@@ -26,7 +26,7 @@ class SudokuSolverV2:
         print_sets(self.rows, self.cols, self.blocks)
 
     def solve(self):
-        self.filled = set()
+        self.filled.clear()
 
         while len(self.empty_cells) != 0:
             num_filled = len(self.filled)
@@ -46,14 +46,19 @@ class SudokuSolverV2:
                     self.cols[col].add(new_val)
                     self.blocks[block_index].add(new_val)
 
+                    # update filled set
                     self.filled.add((row, col))
 
             # after iterating through all the empty cells in this iteration, update empty cells
             self.empty_cells -= self.filled
+            # self.draw()
 
-        if len(self.filled) == num_filled:
+            # if no cells were filled during this iteration, the solver is done
+            if len(self.filled) == num_filled:
+                print("Solution not found.")
+                return
+
+        if is_valid_solution(self.puzzle_mat):
+            print("Solved!")
+        else:
             print("Solution not found.")
-            return
-
-        print("Solved!")
-        return
