@@ -1,14 +1,17 @@
-from solvers.sudoku_solver import basic_solver, get_puzzle_matrix
-from solvers.utils import *
+from solvers.sudoku_solver_v2 import SudokuSolverV2
 
 if __name__ == "__main__":
     # string representation of sudoku puzzle - serialized left to right, top-down
     # 0 represents the empty cells needed to be filled in
-    puzzle1 = "800607030720031080901040200009200106003000400507006300005060809040890017090102005"
-    puzzle2 = "084650000300490050010007400063502190075060230092703540009100060040039005000046910"
-    puzzle3 = "006100000007500300004008607000000000003040200050800700030001020090200800000000061"
+    puzzle2 = "050703060007000800000816000000030000005000100730040086906000204840572093000409000"
 
-    a = get_2d_array(puzzle1)
-    draw(a)
-    r, c, b = get_sudoku_sets(a)
-    print_sets(r, c, b)
+    # r, c, b = get_sudoku_sets(a)
+    # print_sets(r, c, b)
+    # d = get_empty_cells(a)
+    # print(d)
+
+    solver = SudokuSolverV2(puzzle_str=puzzle2)
+    solver.draw()
+    solver.print_info()
+    solver.solve()
+    solver.draw()
