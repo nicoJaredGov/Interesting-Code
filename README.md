@@ -1,4 +1,8 @@
 # Interesting-Code
 
+A collection of algorithms and basic solvers for various problems.
+
 - Tower of Hanoi BFS Solution
-- my implementations of a Finite Automaton and Deterministic Turing Machine in python
+- Implementations of a Finite Automaton and Deterministic Turing Machine in Python
+- Python and C++ graph structures and algorithms
+- Basic Sudoku solver
