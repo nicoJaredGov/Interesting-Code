@@ -1,5 +1,8 @@
+from typing import Any
+
 class GraphItem:
-    def __init__(self, metadata: dict, labels: set[str]):
+    def __init__(self, vertexLabel: str, metadata: dict[str, Any], labels: dict[str, Any]):
+        self.vertexLabel = vertexLabel
         self.metadata = metadata
         self.labels = labels
     
